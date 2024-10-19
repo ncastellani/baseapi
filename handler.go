@@ -27,7 +27,7 @@ func HandleHTTPServerRequests(w http.ResponseWriter, e *http.Request, api *API) 
 	}
 
 	// iterate over the headers to get the first value
-	requestID := baseutils.RandomString(30, true, true, true)
+	requestID := baseutils.RandomString(16, true, true, true)
 	headers := make(map[string]string)
 
 	for k, v := range e.Header {
