@@ -15,7 +15,7 @@ func (r *Request) HandleRequest(api *API) (int, []byte, map[string]string) {
 	r.api = api
 
 	// assemble a logger
-	r.logger = log.New(r.api.Writer, fmt.Sprintf("[%v][%v]", r.ID, r.Path), log.LstdFlags|log.Lmsgprefix)
+	r.logger = log.New(r.api.writer, fmt.Sprintf("[%v][%v]", r.ID, r.Path), log.LstdFlags|log.Lmsgprefix)
 
 	// handle panic at request operators calls
 	defer func() {
