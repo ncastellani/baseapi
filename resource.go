@@ -10,8 +10,8 @@ type Code struct {
 
 // define an incoming request, with its metadata, payload and useful contents.
 type Request struct {
-	logger *log.Logger
 	api    *API
+	Logger *log.Logger
 
 	// general request data
 	ID      string

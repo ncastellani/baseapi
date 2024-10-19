@@ -15,12 +15,12 @@ func (r *Request) HandleRequest(api *API) (int, []byte, map[string]string) {
 	r.api = api
 
 	// assemble a logger
-	r.logger = log.New(r.api.writer, fmt.Sprintf("[%v][%v]", r.ID, r.Path), log.LstdFlags|log.Lmsgprefix)
+	r.Logger = log.New(r.api.writer, fmt.Sprintf("[%v][%v]", r.ID, r.Path), log.LstdFlags|log.Lmsgprefix)
 
 	// handle panic at request operators calls
 	defer func() {
 		if rcv := recover(); rcv != nil {
-			r.logger.Printf("request operator/method got in panic [err: %v]", rcv)
+			r.Logger.Printf("request operator/method got in panic [err: %v]", rcv)
 
 			r.ResultCode = "I001"
 			r.ResultData = rcv
@@ -28,7 +28,7 @@ func (r *Request) HandleRequest(api *API) (int, []byte, map[string]string) {
 	}()
 
 	// call the request operators
-	r.logger.Printf("request recieved. handling... [method: %v]", r.Method)
+	r.Logger.Printf("request recieved. handling... [method: %v]", r.Method)
 
 	r.determineResource()
 	r.parsePayload()
@@ -42,7 +42,7 @@ func (r *Request) HandleRequest(api *API) (int, []byte, map[string]string) {
 
 // return an HTTP response for the current request result.
 func (r *Request) makeResponse() (int, []byte, map[string]string) {
-	r.logger.Printf("starting the response assemble... [code: %v]", r.ResultCode)
+	r.Logger.Printf("starting the response assemble... [code: %v]", r.ResultCode)
 
 	// check if the response code exists and fetch its data
 	code := r.api.codes["I002"]
@@ -78,7 +78,7 @@ func (r *Request) makeResponse() (int, []byte, map[string]string) {
 	// perform the JSON marshaling of the response
 	content, _ := json.Marshal(response)
 
-	r.logger.Println("API response assembled. returning HTTP response...")
+	r.Logger.Println("API response assembled. returning HTTP response...")
 
 	return code.HTTPCode, content, headers
 }
@@ -88,7 +88,7 @@ func (r *Request) determineResource() {
 
 	// check for route existence
 	if _, ok := r.api.routes[r.Path]; !ok {
-		r.logger.Printf("route not found [path: %v]", r.Path)
+		r.Logger.Printf("route not found [path: %v]", r.Path)
 
 		r.ResultCode = "G001"
 		return
@@ -96,11 +96,11 @@ func (r *Request) determineResource() {
 
 	// check for resource methods
 	if v, ok := r.api.routes[r.Path][r.Method]; !ok {
-		r.logger.Printf("method not available for this route [method: %v]", r.Method)
+		r.Logger.Printf("method not available for this route [method: %v]", r.Method)
 
 		// return an OK response for OPTIONS verb validations
 		if r.Method == "OPTIONS" {
-			r.logger.Printf("the current request is an OPTIONS check validation")
+			r.Logger.Printf("the current request is an OPTIONS check validation")
 
 			r.ResultCode = "G002"
 			return
@@ -112,7 +112,7 @@ func (r *Request) determineResource() {
 		r.Resource = v
 	}
 
-	r.logger.Println("resource and method exists!")
+	r.Logger.Println("resource and method exists!")
 
 }
 
@@ -122,7 +122,7 @@ func (r *Request) parsePayload() {
 		return
 	}
 
-	r.logger.Println("starting the parse of the request payload...")
+	r.Logger.Println("starting the parse of the request payload...")
 
 	var err error
 
@@ -131,7 +131,7 @@ func (r *Request) parsePayload() {
 	bodyParameters := make(map[string]interface{})
 
 	if len(r.Input) > 0 {
-		r.logger.Println("this request got an body input")
+		r.Logger.Println("this request got an body input")
 
 		// parse the input data into an interface
 		err = json.Unmarshal(r.Input, &bodyParameters)
@@ -165,7 +165,7 @@ func (r *Request) parsePayload() {
 		var methodParams *map[string]interface{}
 
 		if !baseutils.StringInSlice(v.Name, bodyKeys) {
-			r.logger.Printf("parameter missing at the body payload [param: %v]", v.Name)
+			r.Logger.Printf("parameter missing at the body payload [param: %v]", v.Name)
 
 			missing = append(missing, v)
 			continue
@@ -210,7 +210,7 @@ func (r *Request) parsePayload() {
 		// perform param data check for the "enum" type
 		if v.Kind == "enum" {
 			if !baseutils.StringInSlice((*methodParams)[v.Name].(string), v.Options) {
-				r.logger.Printf("parameter got an value that does not match the ENUM available ones [param: %v] [recieved: %v]", v.Name, (*methodParams)[v.Name].(string))
+				r.Logger.Printf("parameter got an value that does not match the ENUM available ones [param: %v] [recieved: %v]", v.Name, (*methodParams)[v.Name].(string))
 
 				invalid = append(invalid, v)
 				continue
@@ -220,12 +220,12 @@ func (r *Request) parsePayload() {
 		// append this value into the parameters section
 		parameters[v.Name] = (*methodParams)[v.Name]
 
-		r.logger.Printf("sucessfully extracted and parsed parameter [parameter: %v]", v.Name)
+		r.Logger.Printf("sucessfully extracted and parsed parameter [parameter: %v]", v.Name)
 	}
 
 	// return the parameters that failed the verification
 	if len(invalid) > 0 || len(missing) > 0 {
-		r.logger.Printf("this request has invalid or missing parameters [invalid: %v] [missing: %v]", len(invalid), len(missing))
+		r.Logger.Printf("this request has invalid or missing parameters [invalid: %v] [missing: %v]", len(invalid), len(missing))
 
 		r.ResultCode = "G005"
 		r.ResultData = struct {
@@ -242,7 +242,7 @@ func (r *Request) parsePayload() {
 	// assign the parsed body on the request
 	r.Parameters = &parameters
 
-	r.logger.Printf("sucessfully parsed body payload [available: %v]", len(*r.Parameters))
+	r.Logger.Printf("sucessfully parsed body payload [available: %v]", len(*r.Parameters))
 
 }
 
@@ -254,7 +254,7 @@ func (r *Request) callMethod() {
 
 	// check if the resource method function exists
 	if _, ok := r.api.methods[r.Resource.ResourceMethod]; !ok {
-		r.logger.Println("resource method function does not exists at the methods map")
+		r.Logger.Println("resource method function does not exists at the methods map")
 
 		r.ResultCode = "I003"
 		r.ResultData = r.Resource.ResourceMethod
@@ -265,7 +265,7 @@ func (r *Request) callMethod() {
 	// handle panic at function call
 	defer func() {
 		if rcv := recover(); rcv != nil {
-			r.logger.Printf("resource method function got in panic [err: %v]", rcv)
+			r.Logger.Printf("resource method function got in panic [err: %v]", rcv)
 
 			r.ResultCode = "I001"
 			r.ResultData = rcv
@@ -275,11 +275,11 @@ func (r *Request) callMethod() {
 	// call the function
 	ts := time.Now()
 
-	r.logger.Printf("======> %v <======", r.Path)
+	r.Logger.Printf("======> %v <======", r.Path)
 
 	r.ResultData, r.ResultCode = r.api.methods[r.Resource.ResourceMethod](r)
 
-	r.logger.Printf("======> %v <======", time.Since(ts))
+	r.Logger.Printf("======> %v <======", time.Since(ts))
 
 	// fix the response code
 	if r.ResultCode == "" {

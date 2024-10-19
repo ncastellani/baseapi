@@ -73,5 +73,5 @@ func HandleHTTPServerRequests(w http.ResponseWriter, e *http.Request, api *API) 
 	w.WriteHeader(code)
 	w.Write(content)
 
-	r.logger.Println("DONE!")
+	r.Logger.Println("DONE!")
 }
