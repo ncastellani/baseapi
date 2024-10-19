@@ -1,0 +1,22 @@
+{
+
+    "index": {
+        "GET": {
+            "function": "index",
+            "parameters": []
+        }
+    },
+
+    "send_event": {
+        "POST": {
+            "function": "send_event",
+            "parameters": [
+                { "name": "queue", "kind": "enum", "required": true, "options": [ "opt1", "opt2" ] },
+                { "name": "key", "kind": "string", "required": true, "options": [] },
+                { "name": "event", "kind": "string", "required": true, "options": [] },
+                { "name": "payload", "kind": "map", "required": true, "options": [] }
+            ]
+        }
+    }
+
+}

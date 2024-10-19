@@ -1,0 +1,69 @@
+{
+
+    "OK": {
+        "status": 200,
+        "message": {
+            "en-us": "Operation performed sucessfully!",
+            "pt-br": "Operação realizada com sucesso!"
+        }
+    },
+
+    "I001": {
+        "status": 500,
+        "message": {
+            "en-us": "An unknown internal error had occured. Try again later. If the error persists, reach out for our support team.",
+            "pt-br": "Um erro interno e desconhecido ocorreu. Tente novamente mais tarde. Se o erro persistir, entre em contato com nosso time de suporte."
+        }
+    },
+    "I002": {
+        "status": 501,
+        "message": {
+            "en-us": "The operation might have succeded but there is an internal code error. The desired response code does not exists.",
+            "pt-br": "A operação requisitada pode ter sido executada, porém, ocorreu um erro interno. O código de resposta desejado não existe."
+        }
+    },
+    "I003": {
+        "status": 501,
+        "message": {
+            "en-us": "The route API function does not exists. This is not an error with the data you passed.",
+            "pt-br": "A função para a rota de API não existe. Este não é um erro com os dados informados."
+        }
+    },
+
+    "G001": {
+        "status": 404,
+        "message": {
+            "en-us": "The requested endpoint does not exists.",
+            "pt-br": "A terminação solicitada não existe."
+        }
+    },
+    "G002": {
+        "status": 202,
+        "message": {
+            "en-us": "Allow all for HTTP OPTIONS method.",
+            "pt-br": "Permitir tudo para o método HTTP OPTIONS."
+        }
+    },
+    "G003": {
+        "status": 405,
+        "message": {
+            "en-us": "Invalid HTTP request method or not supported at this route.",
+            "pt-br": "Método de requisição HTTP inválido ou não suportado nesta rota."
+        }
+    },
+    "G004": {
+        "status": 406,
+        "message": {
+            "en-us": "The passed input data is not a valid associative JSON.",
+            "pt-br": "O dado de entrada enviado não é um JSON associativo válido."
+        }
+    },
+    "G005": {
+        "status": 406,
+        "message": {
+            "en-us": "Or or more route parameters are missing or are invalid.",
+            "pt-br": "Um ou mais parâmetros de rota está faltando ou é inválido."
+        }
+    }
+
+}
