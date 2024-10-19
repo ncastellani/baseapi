@@ -17,6 +17,7 @@ type Request struct {
 	ID      string
 	IP      string
 	Headers map[string]string
+	Query   map[string]string
 	Path    string
 	Method  string
 	Input   []byte
