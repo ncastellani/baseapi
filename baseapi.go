@@ -8,21 +8,23 @@ import (
 )
 
 // resource function name into a application func map
-type Methods map[string]func(r *Request) (interface{}, string)
+type Methods map[string]func(r *Request) (any, string)
 
 // required interfaces to deal with API items
 type API struct {
-	writer  io.Writer
-	methods Methods
-	codes   map[string]Code
-	routes  map[string]map[string]Resource
+	writer   io.Writer
+	methods  Methods
+	codes    map[string]Code
+	routes   map[string]map[string]Resource
+	hostData []string
 }
 
 // pull the config files, perform validations and return an API interface
-func NewAPI(routes, codes string, methods Methods, writer io.Writer) (api API, err error) {
+func NewAPI(routes, codes string, methods Methods, writer io.Writer, hostData []string) (api API, err error) {
 
 	api.writer = writer
 	api.methods = methods
+	api.hostData = hostData
 
 	// setup a debug logger
 	logger := log.New(writer, "", log.LstdFlags|log.Lmsgprefix)
