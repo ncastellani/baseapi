@@ -1,10 +1,12 @@
 package baseapi
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"log"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/ncastellani/baseutils"
@@ -13,6 +15,18 @@ import (
 // call all the request functions
 func (r *Request) HandleRequest(api *API) (int, []byte, map[string]string) {
 	r.api = api
+
+	// join the host data with the request ID
+	requestHostData := []string{}
+	copy(requestHostData, api.hostData)
+
+	requestHostData = append(requestHostData, fmt.Sprintf("%v", time.Now().Unix()))
+	requestHostData = append(requestHostData, r.ID)
+
+	r.ID = strings.Join(requestHostData, ":")
+
+	// base64 encode the request ID
+	r.ID = base64.StdEncoding.EncodeToString([]byte(r.ID))
 
 	// assemble a logger
 	r.Logger = log.New(r.api.writer, fmt.Sprintf("[%v][%v] ", r.ID, r.Path), log.LstdFlags|log.Lmsgprefix)
