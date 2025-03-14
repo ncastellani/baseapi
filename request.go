@@ -17,7 +17,7 @@ func (r *Request) HandleRequest(api *API) (int, []byte, map[string]string) {
 	r.api = api
 
 	// join the host data with the request ID
-	requestHostData := []string{}
+	requestHostData := make([]string, len(api.hostData))
 	copy(requestHostData, api.hostData)
 
 	requestHostData = append(requestHostData, fmt.Sprintf("%v", time.Now().Unix()))
