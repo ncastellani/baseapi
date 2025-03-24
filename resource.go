@@ -37,9 +37,9 @@ type Request struct {
 
 // define an API method within a route
 type Resource struct {
-	ResourceMethod string              `json:"function"`      // application map into a API function
-	Authorization  bool                `json:"authorization"` // if a Authorization header (with Bearer) should be at the request
-	Parameters     []ResourceParameter `json:"parameters"`    // acceptable parameters for this action
+	ResourceMethod string              `json:"function"`       // application map into a API function
+	Authentication bool                `json:"authentication"` // if a Authorization header (bearer token) should be at the request
+	Parameters     []ResourceParameter `json:"parameters"`     // acceptable parameters for this action
 }
 
 // define an parameter specification for the resource
