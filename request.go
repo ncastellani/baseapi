@@ -45,6 +45,7 @@ func (r *Request) HandleRequest(api *API) (int, []byte, map[string]string) {
 	r.Logger.Printf("request recieved. handling... [method: %v] [IP: %v]", r.Method, r.IP)
 
 	r.determineResource()
+	r.parseAuthentication()
 	r.parsePayload()
 
 	// call the API method
@@ -54,7 +55,7 @@ func (r *Request) HandleRequest(api *API) (int, []byte, map[string]string) {
 	return r.makeResponse()
 }
 
-// return an HTTP response for the current request result.
+// return an HTTP response for the current request result
 func (r *Request) makeResponse() (int, []byte, map[string]string) {
 	r.Logger.Printf("starting the response assemble... [code: %v]", r.ResultCode)
 
@@ -97,7 +98,7 @@ func (r *Request) makeResponse() (int, []byte, map[string]string) {
 	return code.HTTPCode, content, headers
 }
 
-// determine the requested route and resource.
+// determine the requested route and resource
 func (r *Request) determineResource() {
 
 	// check for route existence
@@ -130,7 +131,42 @@ func (r *Request) determineResource() {
 
 }
 
-// extract and parse parameters from URL query and body payload.
+// parse the Authorization bearer token from the headers if required
+func (r *Request) parseAuthentication() {
+	if r.ResultCode != "OK" || !r.Resource.Authentication {
+		return
+	}
+
+	r.Logger.Println("trying to fetch authentication token from the 'Authorization' header...")
+
+	// check if the header Authorization was passed
+	var token string
+
+	if v, ok := r.Headers["Authorization"]; ok {
+		token = v
+	} else {
+		r.Logger.Println("'Authorization' header is not present or does not holds any content")
+
+		r.ResultCode = "G006"
+		return
+	}
+
+	// get the second element of the authorization header
+	authHeader := strings.Fields(token)
+	if len(authHeader) == 1 {
+		r.Logger.Println("the \"Authorization\" header is present but does not use the correct format")
+
+		r.ResultCode = "G007"
+		return
+	}
+
+	r.Token = authHeader[1]
+
+	r.Logger.Printf("sucessfully obtained the authentication token [token: ...%v]", r.Token[len(r.Token)-4:])
+
+}
+
+// extract and parse parameters from URL query and body payload
 func (r *Request) parsePayload() {
 	if r.ResultCode != "OK" || len(r.Resource.Parameters) == 0 {
 		return
@@ -260,7 +296,7 @@ func (r *Request) parsePayload() {
 
 }
 
-// call the resource method function.
+// call the resource method function
 func (r *Request) callMethod() {
 	if r.ResultCode != "OK" {
 		return

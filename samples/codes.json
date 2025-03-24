@@ -64,6 +64,20 @@
             "en-us": "Or or more route parameters are missing or are invalid.",
             "pt-br": "Um ou mais parâmetros de rota está faltando ou é inválido."
         }
+    },
+    "G006": {
+        "status": 401,
+        "message": {
+            "en-us": "The 'Authorization' header required for authenticated actions was not found.",
+            "pt-br": "O cabeçalho 'Authorization' que é necessário para ações autenticadas não foi encontrado."
+        }
+    },
+    "G007": {
+        "status": 401,
+        "message": {
+            "en-us": "The token at the 'Authorization' header must be prefixed by 'Bearer'.",
+            "pt-br": "O token no cabeçalho 'Authorization' deve ser prefixado por 'Bearer'."
+        }
     }
 
 }
