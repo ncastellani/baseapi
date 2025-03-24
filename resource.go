@@ -24,10 +24,10 @@ type Request struct {
 
 	// asserted data
 	Resource   Resource
-	Parameters *map[string]interface{}
+	Parameters *map[string]any
 
 	// method response
-	ResultData interface{}
+	ResultData any
 	ResultCode string
 }
 

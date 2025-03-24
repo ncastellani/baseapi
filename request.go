@@ -80,7 +80,7 @@ func (r *Request) makeResponse() (int, []byte, map[string]string) {
 		Code    string            `json:"code"`
 		Time    time.Time         `json:"time"`
 		Message map[string]string `json:"message"`
-		Data    interface{}       `json:"data"`
+		Data    any               `json:"data"`
 	}{
 		ID:      r.ID,
 		Code:    r.ResultCode,
@@ -142,7 +142,7 @@ func (r *Request) parsePayload() {
 
 	// parse the body parameters
 	var bodyKeys []string
-	bodyParameters := make(map[string]interface{})
+	bodyParameters := make(map[string]any)
 
 	if len(r.Input) > 0 {
 		r.Logger.Println("this request got an body input")
@@ -168,7 +168,7 @@ func (r *Request) parsePayload() {
 	}
 
 	// validate the type of each resource parameter
-	parameters := make(map[string]interface{})
+	parameters := make(map[string]any)
 
 	var missing []ResourceParameter
 	var invalid []ResourceParameter
@@ -176,7 +176,7 @@ func (r *Request) parsePayload() {
 	for _, v := range r.Resource.Parameters {
 
 		// check if the param is on the recieved keys
-		var methodParams *map[string]interface{}
+		var methodParams *map[string]any
 
 		if !baseutils.StringInSlice(v.Name, bodyKeys) {
 			r.Logger.Printf("parameter missing at the body payload [param: %v]", v.Name)
@@ -204,12 +204,12 @@ func (r *Request) parsePayload() {
 				invalid = append(invalid, v)
 				continue
 			}
-		case []string, []interface{}:
+		case []string, []any:
 			if v.Kind != "array" {
 				invalid = append(invalid, v)
 				continue
 			}
-		case map[string]interface{}:
+		case map[string]any:
 			if v.Kind != "map" {
 				invalid = append(invalid, v)
 				continue
