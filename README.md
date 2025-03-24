@@ -1,5 +1,3 @@
 
-### baseapi
-Basic API functions for routing, validation and request handling for Go applications
-
-***
+## BaseAPI
+HTTP/AWS Lambda handler for Go API services with routing and validations.
