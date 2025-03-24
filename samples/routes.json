@@ -3,6 +3,7 @@
     "index": {
         "GET": {
             "function": "index",
+            "authorization": false,
             "parameters": []
         }
     },
@@ -10,6 +11,7 @@
     "send_event": {
         "POST": {
             "function": "send_event",
+            "authorization": true,
             "parameters": [
                 { "name": "queue", "kind": "enum", "required": true, "options": [ "opt1", "opt2" ] },
                 { "name": "key", "kind": "string", "required": true, "options": [] },
