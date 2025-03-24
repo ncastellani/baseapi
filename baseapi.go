@@ -16,8 +16,8 @@ type API struct {
 	routes   map[string]map[string]Resource
 
 	// application middlewares
-	PreRequest  func(r *Request)
-	PostRequest func(r *Request)
+	RequestPreMethod  func(r *Request)
+	RequestPostMethod func(r *Request)
 }
 
 // pull the config files, perform validations and return an API interface
@@ -83,9 +83,9 @@ func NewAPI(routes, codes string, methods Methods, writer io.Writer, hostData []
 
 	l.Println("required index route and codes are available!")
 
-	// set defaults pre and post request middlewares
-	api.PreRequest = func(r *Request) {}
-	api.PostRequest = func(r *Request) {}
+	// set defaults pre and post request method middlewares
+	api.RequestPreMethod = func(r *Request) {}
+	api.RequestPostMethod = func(r *Request) {}
 
 	l.Println("successfully setted up this API handler!")
 

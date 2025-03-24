@@ -48,8 +48,14 @@ func (r *Request) HandleRequest(api *API) (int, []byte, map[string]string) {
 	r.parseAuthentication()
 	r.parsePayload()
 
+	// call the pre method middleware
+	r.api.RequestPreMethod(r)
+
 	// call the API method
 	r.callMethod()
+
+	// call the post method middleware
+	r.api.RequestPostMethod(r)
 
 	// assemble the response
 	return r.makeResponse()
