@@ -2,6 +2,9 @@ package baseapi
 
 import "log"
 
+// resource function name into a application func map
+type Methods map[string]func(r *Request) (any, string)
+
 // define an operation result code, its messages by language and its HTTP code
 type Code struct {
 	HTTPCode int               `json:"status"`  // HTTP return code

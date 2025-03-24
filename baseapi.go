@@ -7,16 +7,17 @@ import (
 	"github.com/ncastellani/baseutils"
 )
 
-// resource function name into a application func map
-type Methods map[string]func(r *Request) (any, string)
-
 // required interfaces to deal with API items
 type API struct {
 	writer   io.Writer
 	methods  Methods
+	hostData []string
 	codes    map[string]Code
 	routes   map[string]map[string]Resource
-	hostData []string
+
+	// application middlewares
+	PreRequest  func(r *Request)
+	PostRequest func(r *Request)
 }
 
 // pull the config files, perform validations and return an API interface
@@ -27,46 +28,66 @@ func NewAPI(routes, codes string, methods Methods, writer io.Writer, hostData []
 	api.hostData = hostData
 
 	// setup a debug logger
-	logger := log.New(writer, "", log.LstdFlags|log.Lmsgprefix)
+	l := log.New(writer, "", log.LstdFlags|log.Lmsgprefix)
 
-	logger.Println("setting up a new API handler...")
+	l.Println("setting up a new API handler...")
 
 	// load the API routes to the application
-	logger.Println("importing routes JSON file from config...")
+	l.Println("importing routes JSON file from the passed path...")
 
 	err = baseutils.ParseJSONFile(routes, &api.routes)
 	if err != nil {
-		logger.Printf("failed to import routes JSON file [err: %v]", err)
-		return API{}, ErrFailedToImportRoutes
+		l.Printf("failed to import routes JSON file [err: %v]", err)
+
+		err = ErrFailedToImportRoutes
+		return
 	}
 
 	// import the API codes
-	logger.Println("importing codes JSON file from config...")
+	l.Println("importing codes JSON file from the passed path...")
 
 	err = baseutils.ParseJSONFile(codes, &api.codes)
 	if err != nil {
-		logger.Printf("failed to import codes JSON file [err: %v]", err)
-		return API{}, ErrFailedToImportCodes
+		l.Printf("failed to import codes JSON file [err: %v]", err)
+
+		err = ErrFailedToImportCodes
+		return
 	}
 
-	logger.Println("configuration file parsed and imported! validating minimum requirements...")
+	l.Println("configuration file parsed and imported! validating minimum requirements...")
 
-	// check if there is a index in the GET method route
+	// check if there is a index route and if it has a GET method
 	if v, ok := api.routes["index"]; !ok {
-		return API{}, ErrNoIndexRoute
+		l.Println("no index route")
+
+		err = ErrNoIndexRoute
+		return
 	} else {
 		if _, ok := v["GET"]; !ok {
-			return API{}, ErrNoIndexRoute
+			l.Println("no index route")
+
+			err = ErrNoIndexRoute
+			return
 		}
 	}
 
 	// check for the codes used at the at lib
 	for _, code := range requiredCodes {
 		if _, ok := api.codes[code]; !ok {
-			logger.Printf("required application code does not exist [code: %v]", code)
-			return API{}, ErrNoRequiredCode
+			l.Printf("a required application code does not exist [code: %v]", code)
+
+			err = ErrNoRequiredCode
+			return
 		}
 	}
+
+	l.Println("required index route and codes are available!")
+
+	// set defaults pre and post request middlewares
+	api.PreRequest = func(r *Request) {}
+	api.PostRequest = func(r *Request) {}
+
+	l.Println("successfully setted up this API handler!")
 
 	return
 }
