@@ -30,6 +30,11 @@ type Request struct {
 	Resource   Resource
 	Parameters *map[string]any
 
+	// application data
+	User    any
+	DB      any
+	AppData any
+
 	// method response
 	ResultData any
 	ResultCode string
