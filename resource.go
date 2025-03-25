@@ -1,6 +1,10 @@
 package baseapi
 
-import "log"
+import (
+	"log"
+
+	"github.com/pocketbase/dbx"
+)
 
 // resource function name into a application func map
 type Methods map[string]func(r *Request) (any, string)
@@ -31,8 +35,8 @@ type Request struct {
 	Parameters *map[string]any
 
 	// application data
+	DBTx    *dbx.Tx
 	User    any
-	DB      any
 	AppData any
 
 	// method response

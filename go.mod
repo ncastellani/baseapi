@@ -5,6 +5,7 @@ go 1.23.0
 require (
 	github.com/aws/aws-lambda-go v1.47.0
 	github.com/ncastellani/baseutils v0.4.0
+	github.com/pocketbase/dbx v1.11.0
 )
 
 require (
