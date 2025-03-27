@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/pocketbase/dbx"
+	"gopkg.in/guregu/null.v4"
 )
 
 // resource function name into a application func map
@@ -29,6 +30,7 @@ type Request struct {
 	Method  string
 	Input   []byte
 	Token   string
+	Agent   null.String
 
 	// asserted data
 	Resource   Resource

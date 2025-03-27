@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/ncastellani/baseutils"
+	"gopkg.in/guregu/null.v4"
 )
 
 // call all the request functions
@@ -40,6 +41,11 @@ func (r *Request) HandleRequest(api *API) (int, []byte, map[string]string) {
 			r.ResultData = rcv
 		}
 	}()
+
+	// parse User-Agent header
+	if agent, ok := r.Headers["User-Agent"]; ok {
+		r.Agent = null.StringFrom(agent)
+	}
 
 	// call the request operators
 	r.Logger.Printf("request recieved. handling... [method: %v] [IP: %v]", r.Method, r.IP)
